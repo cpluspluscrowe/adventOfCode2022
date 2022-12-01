@@ -1,11 +1,12 @@
 import scala.io.Source._
 import scala.collection.mutable.ListBuffer
 
-object CalorieHungryElves {
+object CalorieHungryElves extends App {
   val lines = loadLines()
   val groups = generateGroups(lines)
   val personCalories = groups.map(sumCalories).sorted(Ordering.Int.reverse)
   val topThree = personCalories(0) + personCalories(1) + personCalories(2)
+  println(topThree)
 
   def loadLines(): List[String] = {
     val source = fromFile("input.txt")
@@ -36,5 +37,3 @@ object CalorieHungryElves {
     groups
   }
 }
-
-CalorieHungryElves.topThree
