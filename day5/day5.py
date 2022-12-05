@@ -3,20 +3,12 @@
 import pandas as pd
 import re
 
-s = '''    [D]    
-[N] [C]    
-[Z] [M] [P]
- 1   2   3 
-
-move 1 from 2 to 1
-move 3 from 1 to 3
-move 2 from 2 to 1
-move 1 from 1 to 2'''
+s = open("./input.txt", "r").read()
 
 
 parts = s.split("\n\n")
 boxes = parts[0].split("\n")[-1].split()
-directions = parts[1].split("\n")
+directions = parts[1].split("\n")[:-1]
 replaced_stacks = list(map(lambda x: x.replace("    ","[-]").replace(" ","").replace("[","").replace("]","") , parts[0].split("\n")[:-1]))
 stacks = list(map(lambda x: [t for t in x], replaced_stacks))
 
