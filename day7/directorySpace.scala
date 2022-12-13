@@ -1,11 +1,6 @@
 import scala.io.Source._
 import scala.collection.mutable._
 
-val path = "./input.txt"
-val source = fromFile(path)
-val lines = source.getLines.toList
-source.close
-
 sealed trait LineType(line: String) {
   val classification = "nothing"
 }
@@ -22,8 +17,7 @@ class Command(line: String) extends LineType(line: String) {
 
 class Directory(line: String, val parentDirectory: Directory = null) {
   val name =
-    if (line.contains("$") || line.contains("dir")) then line.split(" ")(1)
-  else line
+    if (line.contains("$") || line.contains("dir")) then line.split(" ")(1) else line
   var children = ListBuffer[Directory]()
   var files = ListBuffer[File]()
   def getOrCreateChild(name: String): Directory = {
@@ -84,6 +78,11 @@ object LineParser {
   }
 }
 
+// Main logic
+val path = "./input.txt"
+val source = fromFile(path)
+val lines = source.getLines.toList
+source.close
 val types = lines.map(LineParser.classifyLines)
 val both = lines zip types
 val topDirectory = Directory("/")
@@ -113,11 +112,7 @@ for ((line, lineType) <- both) {
   }
 }
 
-while (currentDirectory.parentDirectory != null) {
-  currentDirectory = currentDirectory.parentDirectory
-}
-
-val space = 70000000 - currentDirectory.getFileSize()
+val space = 70000000 - topDirectory.getFileSize()
 
 def printStats(directory: Directory): Int = {
   val dirSize = directory.getFileSize()
@@ -133,5 +128,5 @@ def printStats(directory: Directory): Int = {
   smallest
 }
 
-val answer = printStats(currentDirectory)
+val answer = printStats(topDirectory)
 println(answer - space)
