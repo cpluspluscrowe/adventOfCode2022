@@ -1,3 +1,4 @@
+import numpy as np
 from copy import deepcopy
 
 lines = ""
@@ -47,25 +48,50 @@ def get_tail_movement(tail_location, offset):
         return (y, x)
 
 
+def visualize(locations):
+    ys = list(map(lambda x: x[0], locations))
+    xs = list(map(lambda x: x[1], locations))
+    negative_y = min(ys)
+    negative_x = min(xs)
+    shift_ys = list(map(lambda y: int(y + abs(negative_y) + 1), ys))
+    shift_xs = list(map(lambda x: int(x + abs(negative_x) + 1), xs))
+    y_dim = int(max(1, max(shift_ys) + 1))
+    x_dim = int(max(1, max(shift_xs) + 1))
+    array = np.full([y_dim, x_dim], 0)
+    knots = [-1] + [x for x in range(1,10)]
+    index = len(knots) - 1
+    to_traverse = list(zip(shift_ys, shift_xs))
+    to_traverse.reverse()
+    for y,x in to_traverse:
+        array[y][x] = knots[index]
+        index -= 1
+    print(array)
+    print()
+    
+
 location = (0,0)
 tail_location = (0, 0)
 history = set()
 
-    
+locations = []
+for x in range(10):
+    locations.append(location)
+
+
 for line in lines:
     spl = line.split(" ")
     direction = spl[0]
     number = int(spl[1])
     for _ in range(number):
-        location = increment_location(direction, 1, location)
-        offset = get_offset(location, tail_location)
-        tail_location = get_tail_movement(tail_location, offset)
-        print(location, tail_location)
-        history.add(deepcopy(tail_location))
+        locations[0] = increment_location(direction, 1, locations[0])
+        for x in range(1, 10):
+            location = locations[x-1]
+            tail_location = locations[x]
+            offset = get_offset(location, tail_location)
+            locations[x] = get_tail_movement(tail_location, offset)
+        history.add(deepcopy(locations[-1]))
+        visualize(locations)
         
-
+        
 print(len(history))    
     
-        
-    
-# now the trick is updating the tail's location.
